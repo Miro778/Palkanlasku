@@ -1,6 +1,11 @@
 import React from 'react'
 import { useState } from 'react'
 import './index.css'
+import { makeStyles } from '@mui/styles'
+import Modal from '@material-ui/core/Modal'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import { white } from '@material-ui/core/styles/colors'
 
 const App = () => {
 
@@ -57,8 +62,85 @@ const App = () => {
   </div>
   </form>
 </div>
+<div>
+  <h2>Työvuorot</h2>
+  <VuoroLisaysModal />
+</div>
 </body>
   )
 }
+
+const modalStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: 400,
+    border: '2px solid #000',
+  },
+}))
+
+function VuoroLisaysModal() {
+
+  function getModalStyle() {
+    const top = 50
+    const left = 50
+
+    return {
+      top: `${top}%`,
+      left: `${left}%`,
+      transform: `translate(-${top}%, -${left}%)`,
+    }
+  }
+
+  const classesModal = modalStyles()
+  const [modalStyle] = React.useState(getModalStyle)
+  const [open, setOpen] = React.useState(false)
+  const [alkuPvm, setAlkuPvm] = useState('')
+  const [loppuPvm, setLoppuPvm] = useState('')
+  const [alkuKlo, setAlkuKlo] = useState('')
+  const [loppuKlo, setLoppuKlo] = useState('')
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const lisaaVuoro = () =>  {
+    console.log('todo')
+  }
+
+  return (
+    <div>
+      <Button color="primary" variant="contained" onClick={handleOpen}>+ Lisää työvuoro</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <div style={modalStyle} className={classesModal.paper}>
+          <form onSubmit={lisaaVuoro}>
+            <h2 id="simple-modal-title">Ilmoita työvuoron alku- ja loppuaika</h2>
+            <div>
+              <TextField label="Alkupvm"
+                id='alkuPvmField'
+                type="text"
+                value={alkuPvm}
+                name="Title"
+                onChange={({ target }) => setAlkuPvm(target.value)}
+              />
+            </div>
+            <div>
+              <Button variant="contained" color="primary" id='submitAvatar-button' type="submit">Submit</Button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+    </div>
+  )
+}
+
 
 export default App
