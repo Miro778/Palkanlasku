@@ -5,11 +5,17 @@ import { makeStyles } from '@mui/styles'
 import Modal from '@material-ui/core/Modal'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
 
 const App = () => {
 
-  let palkka = 0
-  let tyovuorot = []
+  let tyovuorot = JSON.parse(localStorage.getItem("tyovuorot") || "[]")
 
   const [perusPalkka, setPerusPalkka] = useState(11.0)
   const [iltalisa, setIltalisa] = useState(1.0)
@@ -18,6 +24,8 @@ const App = () => {
   const [iltalisaAlku, setIltalisaAlku] = useState(18)
   const [yolisaAlku, setYolisaAlku] = useState(22)
   const [yolisaLoppu, setYolisaLoppu] = useState(7)
+
+  let palkka = 0
 
   function VuoroLisaysModal() {
 
@@ -49,8 +57,7 @@ const App = () => {
     }
   
     const lisaaVuoro = (event) =>  {
-      event.preventDefault()
-  
+
       const uusiVuoro = {
         alkuPvm: alkuPvm,
         loppuPvm: loppuPvm,
@@ -61,6 +68,7 @@ const App = () => {
       console.log('Lisätään vuoro: ' , uusiVuoro)
       tyovuorot.push(uusiVuoro)
       console.log('Vuorot: ' , tyovuorot)
+      localStorage.setItem("tyovuorot", JSON.stringify(tyovuorot))
     }
   
     return (
@@ -127,11 +135,40 @@ const App = () => {
     )
   }
 
+  function VuoroLista() {
+    return (
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Pvm</TableCell>
+              <TableCell>Klo</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+            {tyovuorot.map((tyovuoro) => (
+            <TableRow
+              key={tyovuoro.alkuPvm}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell >{tyovuoro.alkuPvm}</TableCell>
+              <TableCell >{tyovuoro.alkuKlo} - {tyovuoro.loppuKlo}</TableCell>
+              </TableRow>
+          ))}
+            </TableBody>
+            </Table>
+    </TableContainer>
+    )}
+
+    function naytaPalkka() {
+      console.log('Palkkasi on näistä vuoroista ' , palkka , '€')
+    }
+
 
   return (
 <body id='body'>
   <div>
-<h1 id='title'>Laske palkkasi</h1>
+<h1 id='title'>Laske bruttopalkkasi</h1>
 <p>Ilmoitettuasi palkkatiedot ja työvuorosi sovellus laskee minkä verran palkkaa sinun tulisi ilmotetuista työvuoroista saada. Huomioithan, että </p>
 <p>tarkempia tietoja ei lisien ja peruspalkan lisäksi kysellä, eikä täten esimerkiksi ylityö- ja hälytyskorvauksia oteta mukaan laskuihin.</p>
 </div>
@@ -169,9 +206,13 @@ const App = () => {
   </div>
   </form>
 </div>
-<div>
+<div id='tyovuorot'>
   <h2>Työvuorot</h2>
   <VuoroLisaysModal />
+  <VuoroLista />
+</div>
+<div>
+<Button color="primary" variant="contained" onClick={naytaPalkka}>Laske paljonko saat palkkaa</Button>
 </div>
 </body>
   )
