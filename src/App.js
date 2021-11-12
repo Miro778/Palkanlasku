@@ -17,13 +17,13 @@ const App = () => {
 
   let tyovuorot = JSON.parse(localStorage.getItem("tyovuorot") || "[]")
 
-  const [perusPalkka, setPerusPalkka] = useState(11.0)
-  const [iltalisa, setIltalisa] = useState(1.0)
-  const [yolisa, setYolisa] = useState(2.2)
-  const [lauantailisa, setLauantailisa] = useState(2.0)
-  const [iltalisaAlku, setIltalisaAlku] = useState(18)
-  const [yolisaAlku, setYolisaAlku] = useState(22)
-  const [yolisaLoppu, setYolisaLoppu] = useState(7)
+  const [perusPalkka, setPerusPalkka] = useState(JSON.parse(localStorage.getItem("peruspalkka") || 11))
+  const [iltalisa, setIltalisa] = useState(JSON.parse(localStorage.getItem("iltalisa") || 1))
+  const [yolisa, setYolisa] = useState(JSON.parse(localStorage.getItem("yolisa") || 2.2))
+  const [lauantailisa, setLauantailisa] = useState(JSON.parse(localStorage.getItem("lauantailisa") || 2))
+  const [iltalisaAlku, setIltalisaAlku] = useState(JSON.parse(localStorage.getItem("iltalisaalku") || 18))
+  const [yolisaAlku, setYolisaAlku] = useState(JSON.parse(localStorage.getItem("yolisaalku") || 22))
+  const [yolisaLoppu, setYolisaLoppu] = useState(JSON.parse(localStorage.getItem("yolisaloppu") || 7))
 
   let palkka = 0
 
@@ -56,7 +56,7 @@ const App = () => {
       setOpen(false)
     }
   
-    const lisaaVuoro = (event) =>  {
+    const lisaaVuoro = () =>  {
 
       const uusiVuoro = {
         alkuPvm: alkuPvm,
@@ -65,9 +65,7 @@ const App = () => {
         loppuKlo: loppuKlo
       }
   
-      console.log('Lisätään vuoro: ' , uusiVuoro)
       tyovuorot.push(uusiVuoro)
-      console.log('Vuorot: ' , tyovuorot)
       localStorage.setItem("tyovuorot", JSON.stringify(tyovuorot))
     }
   
@@ -164,6 +162,41 @@ const App = () => {
       console.log('Palkkasi on näistä vuoroista ' , palkka , '€')
     }
 
+    const paivitaPerusPalkka = (event) => {
+      setPerusPalkka(event.target.value)
+      localStorage.setItem("peruspalkka", JSON.stringify(event.target.value))
+    }
+
+    const paivitaIltalisa = (event) => {
+      setIltalisa(event.target.value)
+      localStorage.setItem("iltalisa", JSON.stringify(event.target.value))
+    }
+
+    const paivitaYolisa = (event) => {
+      setYolisa(event.target.value)
+      localStorage.setItem("yolisa", JSON.stringify(event.target.value))
+    }
+
+    const paivitaLauantailisa = (event) => {
+      setLauantailisa(event.target.value)
+      localStorage.setItem("lauantailisa", JSON.stringify(event.target.value))
+    }
+
+    const paivitaIltalisaAlku = (event) => {
+      setIltalisaAlku(event.target.value)
+      localStorage.setItem("iltalisaalku", JSON.stringify(event.target.value))
+    }
+
+    const paivitaYolisaAlku = (event) => {
+      setYolisaAlku(event.target.value)
+      localStorage.setItem("yolisaalku", JSON.stringify(event.target.value))
+    }
+
+    const paivitaYolisaLoppu = (event) => {
+      setYolisaLoppu(event.target.value)
+      localStorage.setItem("yolisaloppu", JSON.stringify(event.target.value))
+    }
+
 
   return (
 <body id='body'>
@@ -177,31 +210,31 @@ const App = () => {
   <form>
   <div id='syottokentta'>
   <label htmlFor="ppalkka">Perustuntipalkka:</label>
-  <input type="text" id="ppalkka" size="1" name="perustuntipalkka" value={perusPalkka} onChange={({ target }) => setPerusPalkka(target.value)}/>
+  <input type="text" id="ppalkka" size="1" name="perustuntipalkka" value={perusPalkka} onChange={paivitaPerusPalkka}/>
   <span>€/h</span>
   </div>
   <br />
   <div id='syottokentta'>
   <label htmlFor="ilisa">Iltalisä:</label>
-  <input type="text" id="ilisa" size="1" name="iltalisa" value={iltalisa} onChange={({ target }) => setIltalisa(target.value)}/>
+  <input type="text" id="ilisa" size="1" name="iltalisa" value={iltalisa} onChange={paivitaIltalisa}/>
   <span>€/h, </span>
   <label htmlFor="ylisa">Yölisä:</label>
-  <input type="text" id="ylisa" size="1" name="yolisa" value={yolisa} onChange={({ target }) => setYolisa(target.value)}/>
+  <input type="text" id="ylisa" size="1" name="yolisa" value={yolisa} onChange={paivitaYolisa}/>
   <span>€/h, </span>
   <label htmlFor="llisa">Lauantailisä:</label>
-  <input type="text" id="llisa" size="1" name="lauantailisa" value={lauantailisa} onChange={({ target }) => setLauantailisa(target.value)}/>
+  <input type="text" id="llisa" size="1" name="lauantailisa" value={lauantailisa} onChange={paivitaLauantailisa}/>
   <span>€/h</span>
   </div>
   <br />
   <div id='syottokentta'>
   <label htmlFor="ilisaAlku">Iltalisä masketaan jälkeen klo:</label>
-  <input type="text" id="ilisaAlku" size="1" name="ilisaAlku" value={iltalisaAlku} onChange={({ target }) => setIltalisaAlku(target.value)}/>
+  <input type="text" id="ilisaAlku" size="1" name="ilisaAlku" value={iltalisaAlku} onChange={paivitaIltalisaAlku}/>
   <span>: 00, </span>
   <label htmlFor="ylisaAlku">Yölisä masketaan jälkeen klo:</label>
-  <input type="text" id="ylisaAlku" size="1" name="ylisaAlku" value={yolisaAlku} onChange={({ target }) => setYolisaAlku(target.value)}/>
+  <input type="text" id="ylisaAlku" size="1" name="ylisaAlku" value={yolisaAlku} onChange={paivitaYolisaAlku}/>
   <span>: 00, </span>
   <label htmlFor="ylisaLoppu">Yölisä loppuu klo:</label>
-  <input type="text" id="ylisaLoppu" size="1" name="ylisaLoppu" value={yolisaLoppu} onChange={({ target }) => setYolisaLoppu(target.value)}/>
+  <input type="text" id="ylisaLoppu" size="1" name="ylisaLoppu" value={yolisaLoppu} onChange={paivitaYolisaLoppu}/>
   <span>: 00</span>
   </div>
   </form>
