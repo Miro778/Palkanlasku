@@ -1,8 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import './index.css'
-import { makeStyles } from '@mui/styles'
 import Modal from '@material-ui/core/Modal'
+import Box from '@mui/material/Box';
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Table from '@mui/material/Table'
@@ -12,6 +12,8 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import IconButton from '@mui/material/IconButton'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const App = () => {
 
@@ -29,22 +31,8 @@ const App = () => {
 
   function VuoroLisaysModal() {
 
-    function getModalStyle() {
-      const top = 50
-      const left = 50
-  
-      return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-      }
-    }
-  
-    const classesModal = modalStyles()
-    const [modalStyle] = React.useState(getModalStyle)
     const [open, setOpen] = React.useState(false)
     const [alkuPvm, setAlkuPvm] = useState('01/12/2021')
-    const [loppuPvm, setLoppuPvm] = useState('01/12/2021')
     const [alkuKlo, setAlkuKlo] = useState('07:00')
     const [loppuKlo, setLoppuKlo] = useState('15:00')
   
@@ -60,7 +48,6 @@ const App = () => {
 
       const uusiVuoro = {
         alkuPvm: alkuPvm,
-        loppuPvm: loppuPvm,
         alkuKlo: alkuKlo,
         loppuKlo: loppuKlo
       }
@@ -78,7 +65,7 @@ const App = () => {
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
-          <div style={modalStyle} className={classesModal.paper}>
+          <Box sx={modalStyle}>
             <form onSubmit={lisaaVuoro}>
               <h2 id="simple-modal-title">Ilmoita työvuoron alku- ja loppuaika</h2>
               <p>Pvm muodossa pv/kk/vuosi, ja kellonajat muodossa 00:00</p>
@@ -92,7 +79,7 @@ const App = () => {
                   required={true}
                   onChange={({ target }) => setAlkuPvm(target.value)}
                 />
-                <span> </span>
+                <br />
                 <TextField label="Alkaa klo:"
                   id='alkuKloField'
                   type="text"
@@ -102,17 +89,7 @@ const App = () => {
                   required={true}
                   onChange={({ target }) => setAlkuKlo(target.value)}
                 />
-                <br />
-                <TextField label="Loppupvm"
-                  id='loppuPvmField'
-                  type="text"
-                  value={loppuPvm}
-                  name="Title"
-                  size='small'
-                  required={true}
-                  onChange={({ target }) => setLoppuPvm(target.value)}
-                />
-                <span> </span>
+                <span />
                 <TextField label="Loppuu klo:"
                   id='loppuKloField'
                   type="text"
@@ -127,13 +104,26 @@ const App = () => {
                 <Button variant="contained" color="primary" id='lisaaVuoro-button' type="submit">Lisää</Button>
               </div>
             </form>
-          </div>
+          </Box>
         </Modal>
       </div>
     )
   }
 
   function VuoroLista() {
+
+    function poistaVuoro(vuorot, vuoro) {
+      localStorage.setItem("tyovuorot", JSON.stringify(poistaTaulukosta(vuorot,vuoro)))
+      window.location.reload()
+    }
+
+    function poistaTaulukosta(taulukko, poistettava) { 
+    
+      return taulukko.filter(function(ele){ 
+          return ele !== poistettava; 
+      });
+  }
+
     return (
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -151,6 +141,11 @@ const App = () => {
             >
               <TableCell >{tyovuoro.alkuPvm}</TableCell>
               <TableCell >{tyovuoro.alkuKlo} - {tyovuoro.loppuKlo}</TableCell>
+              <TableCell >
+              <IconButton onClick={() => {poistaVuoro(tyovuorot,tyovuoro)}} aria-label="delete">
+              <DeleteIcon />
+              </IconButton>
+              </TableCell>
               </TableRow>
           ))}
             </TableBody>
@@ -251,13 +246,17 @@ const App = () => {
   )
 }
 
-const modalStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    border: '2px solid #000',
-  },
-}))
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
 
 
 export default App
