@@ -154,8 +154,66 @@ const App = () => {
     )}
 
     function naytaPalkka() {
+      palkka = laskePalkka(tyovuorot)
       console.log('Palkkasi on näistä vuoroista ' , palkka , '€')
     }
+
+    function laskePalkka(tyovuorot) {
+      let palkka = 0
+      for (var i = 0;i < tyovuorot.length;i++) {
+          palkka = palkka + laskeVuoronPalkka(tyovuorot[i])
+      }
+  
+    return palkka
+  }
+
+  function laskeVuoronPalkka(tyovuoro) {
+    let alkuH = parseInt(tyovuoro.alkuKlo.substring(0,2))
+    let alkuM = parseInt(tyovuoro.alkuKlo.substring(3,5))
+    let loppuH = parseInt(tyovuoro.loppuKlo.substring(0,2))
+    let loppuM = parseInt(tyovuoro.loppuKlo.substring(3,5))
+    if (loppuH === 0 && loppuM === 0) loppuH = 24 // Jos vuoro loppuu klo 00:00
+    if (alkuH > loppuH || (alkuH === loppuH && alkuM > loppuM)) return laskeYoVuoronPalkka(alkuH,alkuM,loppuH,loppuM, tyovuoro.alkuPvm) // Laskee palkan kun työaika jakautuu kahdelle vuorokaudelle. Eli kyseessä yövuoro.
+    return laskeVuorokaudenPalkka(alkuH, alkuM, loppuH, loppuM, tyovuoro.alkuPvm) // Laskee palkan kun työaika keskittyy vain yhdelle vuorokaudelle. Eli kyseessä ei-yövuoro.
+  }
+
+  function laskeYoVuoronPalkka(alkuH,alkuM,loppuH,loppuM, Pvm) {
+    let toinenPvm = getSeuraavaPvm(Pvm)
+    return laskeVuorokaudenPalkka(alkuH, alkuM, 24, 0, Pvm) + laskeVuorokaudenPalkka(0, 0, loppuH, loppuM, toinenPvm)
+  }
+
+  function getSeuraavaPvm(Pvm) {
+    let alkuPvmFormat = Pvm.substring(3,5) + '/' + Pvm.substring(0,2) + Pvm.substring(5)
+    let pvm = new Date(alkuPvmFormat)
+    let seuraavaPvm = new Date(pvm)
+    seuraavaPvm.setDate(pvm.getDate() + 1)
+    let seuraavaPvmString = String(seuraavaPvm.getDate()).padStart(2, '0') + '/' + String(seuraavaPvm.getMonth() + 1).padStart(2, '0') + '/' + seuraavaPvm.getFullYear()
+    console.log('seuraavaPvm: ' , seuraavaPvmString)
+    return seuraavaPvmString
+  }
+
+  function laskeVuorokaudenPalkka(alkuH, alkuM, loppuH, loppuM, Pvm) {
+    let vuoronPituus = loppuH - alkuH + ((loppuM - alkuM) / 60)
+    let alkuPvmFormat = Pvm.substring(3,5) + '/' + Pvm.substring(0,2) + Pvm.substring(5)
+    let pvm = new Date(alkuPvmFormat)
+     if (pvm.getDay() === 0 ) return vuoronPituus * perusPalkka * 2 + laskeIltalisa(alkuH, alkuM, loppuH, loppuM) * 2 + laskeYolisa(alkuH, alkuM, loppuH, loppuM) * 2
+     if (pvm.getDay() === 6 ) return vuoronPituus * perusPalkka + vuoronPituus * lauantailisa + laskeIltalisa(alkuH, alkuM, loppuH, loppuM) + laskeYolisa(alkuH, alkuM, loppuH, loppuM)
+    return vuoronPituus * perusPalkka + laskeIltalisa(alkuH, alkuM, loppuH, loppuM) + laskeYolisa(alkuH, alkuM, loppuH, loppuM)
+  }
+
+  function laskeIltalisa(alkuH, alkuM, loppuH, loppuM) {
+    if (loppuH <= iltalisaAlku || alkuH >= yolisaAlku) return 0 // Vuoro loppuu ennen iltalisän alkua TAI vuoro alkaa iltalisän loppumisen jälkeen -> Vuorosta ei saa iltalisää
+    let iltalisanPituus = Math.min((loppuH + loppuM / 60),yolisaAlku) - Math.max(iltalisaAlku, (alkuH + alkuM / 60))
+    return iltalisanPituus * iltalisa
+  }
+
+  function laskeYolisa(alkuH, alkuM, loppuH, loppuM) {
+    if (loppuH < yolisaAlku && alkuH > yolisaLoppu) return 0 // Vuoro loppuu ennen yölisän alkua JA alkaa yölisän loppumisen jälkeen -> Vuorosta ei saa yölisää
+    let yolisanPituus = 0
+    if (loppuH > yolisaAlku) yolisanPituus = Math.min((loppuH + loppuM / 60), 24) - Math.max(yolisaAlku, (alkuH + alkuM / 60))
+    if (alkuH < yolisaLoppu) yolisanPituus = Math.min((loppuH + loppuM / 60), yolisaLoppu) - (alkuH + alkuM / 60)
+    return yolisanPituus * yolisa
+  }
 
     const paivitaPerusPalkka = (event) => {
       setPerusPalkka(event.target.value)
