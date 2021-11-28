@@ -155,7 +155,7 @@ const App = () => {
 
     function naytaPalkka() {
       palkka = laskePalkka(tyovuorot)
-      console.log('Palkkasi on näistä vuoroista ' , palkka , '€')
+      alert(`Palkkasi on näistä vuoroista ${palkka}€`)
     }
 
     function laskePalkka(tyovuorot) {
@@ -188,7 +188,6 @@ const App = () => {
     let seuraavaPvm = new Date(pvm)
     seuraavaPvm.setDate(pvm.getDate() + 1)
     let seuraavaPvmString = String(seuraavaPvm.getDate()).padStart(2, '0') + '/' + String(seuraavaPvm.getMonth() + 1).padStart(2, '0') + '/' + seuraavaPvm.getFullYear()
-    console.log('seuraavaPvm: ' , seuraavaPvmString)
     return seuraavaPvmString
   }
 
@@ -225,13 +224,28 @@ const App = () => {
       localStorage.setItem("iltalisa", JSON.stringify(event.target.value))
     }
 
+    const paivitaIltalisapr = (event) => {
+      setIltalisa((event.target.value / 100) * perusPalkka)
+      localStorage.setItem("iltalisa", JSON.stringify(event.target.value))
+    }
+
     const paivitaYolisa = (event) => {
       setYolisa(event.target.value)
       localStorage.setItem("yolisa", JSON.stringify(event.target.value))
     }
 
+    const paivitaYolisapr = (event) => {
+      setYolisa((event.target.value / 100) * perusPalkka)
+      localStorage.setItem("yolisa", JSON.stringify(event.target.value))
+    }
+
     const paivitaLauantailisa = (event) => {
       setLauantailisa(event.target.value)
+      localStorage.setItem("lauantailisa", JSON.stringify(event.target.value))
+    }
+
+    const paivitaLauantailisapr = (event) => {
+      setLauantailisa((event.target.value / 100) * perusPalkka)
       localStorage.setItem("lauantailisa", JSON.stringify(event.target.value))
     }
 
@@ -257,6 +271,7 @@ const App = () => {
 <h1 id='title'>Laske bruttopalkkasi</h1>
 <p>Ilmoitettuasi palkkatiedot ja työvuorosi sovellus laskee minkä verran palkkaa sinun tulisi ilmotetuista työvuoroista saada. Huomioithan, että </p>
 <p>tarkempia tietoja ei lisien ja peruspalkan lisäksi kysellä, eikä täten esimerkiksi ylityö- ja hälytyskorvauksia oteta mukaan laskuihin.</p>
+<p>Myöskään pyhäpäiviltä maksettavia korvauksia ei lasketa mukaan.</p> 
 </div>
 <div>
   <h2>Palkkatiedot</h2>
@@ -270,13 +285,19 @@ const App = () => {
   <div id='syottokentta'>
   <label htmlFor="ilisa">Iltalisä:</label>
   <input type="text" id="ilisa" size="1" name="iltalisa" value={iltalisa} onChange={paivitaIltalisa}/>
-  <span>€/h, </span>
+  <span>€/h tai </span>
+  <input type="text" id="ilisa%" size="1" name="iltalisa%" onChange={paivitaIltalisapr}/>
+  <span>%, </span>
   <label htmlFor="ylisa">Yölisä:</label>
   <input type="text" id="ylisa" size="1" name="yolisa" value={yolisa} onChange={paivitaYolisa}/>
-  <span>€/h, </span>
+  <span>€/h tai </span>
+  <input type="text" id="ilisa%" size="1" name="iltalisa%" onChange={paivitaYolisapr}/>
+  <span>%, </span>
   <label htmlFor="llisa">Lauantailisä:</label>
   <input type="text" id="llisa" size="1" name="lauantailisa" value={lauantailisa} onChange={paivitaLauantailisa}/>
-  <span>€/h</span>
+  <span>€/h tai </span>
+  <input type="text" id="ilisa%" size="1" name="iltalisa%" onChange={paivitaLauantailisapr}/>
+  <span>%</span>
   </div>
   <br />
   <div id='syottokentta'>
