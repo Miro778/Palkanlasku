@@ -1,2 +1,2 @@
 # Palkantarkistus
-Laskee syötettyjen tietojen perusteella palkan tietyltä ajanjaksolta.
+Web-sovellus, joka laskee syötettyjen tietojen perusteella työntekijän saaman palkan tietyltä ajanjaksolta.
