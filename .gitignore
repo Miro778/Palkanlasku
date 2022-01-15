@@ -1,5 +1,9 @@
 #files
-public
+public/
+Procfile
+package.json
+package-lock.json
+.eslintrc.js
 
 # Logs
 logs
