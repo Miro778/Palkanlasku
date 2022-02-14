@@ -1,5 +1,5 @@
 # Palkkalaskuri
-React-sovellus, joka laskee syötettyjen tietojen perusteella työntekijän saaman palkan. Tarkoitettu tuntipalkalla työskenteleville.
+React-sovellus, joka laskee syötettyjen tietojen perusteella työntekijän saaman palkan. Tarkoitettu tuntipalkalla työskenteleville palkan tarkastamista varten.
 
 Käyttöliittymä:
 
